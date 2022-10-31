@@ -11,8 +11,8 @@ const secondsFor = document.querySelector('[data-seconds]');
 
 
 startBtn.disabled = true;
-let timerId = null;
-let selectData;
+// let timerId = null;
+let selectData = 0;
 
 const options = {
 enableTime: true,
@@ -26,23 +26,30 @@ onClose(selectedDates) {
   if(timeNow >= selectedDates[0]){
     Notiflix.Notify.failure("Please choose a date in the future")
     startBtn.disabled = true
-  } 
+  } else{
     startBtn.disabled = false
     selectData = selectedDates[0];
+  }
+   
   },
 };
 
 function startTimer(){
   startBtn.disabled = true
   inputRef.disabled = true
+  liveTimer();
   
-  timerId = setInterval(() => {
-    let timeNow = Date.now()
-    let deltaTime = selectData - timeNow;
-    if(deltaTime <= 0){
-      clearInterval(timerId)
-    }
-    updateDataTime(deltaTime)
+  const timerId = setInterval(() => {
+    liveTimer(timerId);
+    // let timeNow = Date.now()
+    // let deltaTime = selectData - timeNow;
+    // if(deltaTime <= 0){
+    //   clearInterval(timerId)
+    // }else{
+    //   const timeLeft = convertMs(deltaTime)
+    //    updateDataTime(timeLeft)
+    // }
+    
   
   }, 1000)
 }
@@ -50,23 +57,24 @@ function startTimer(){
 startBtn.addEventListener('click', startTimer)
 
 
-// function liveTimer(selectedDates){
-//   let timeNow = Date.now()
-//   let deltaTime = selectedDates[0] - timeNow;
-//   if(deltaTime < 1000){
-//     clearInterval(timerId)
-//   }
-//   updateDataTime(deltaTime)
-// ---
-// }
+function liveTimer(timerId){
+  let timeNow = Date.now()
+  let deltaTime = selectData - timeNow;
+  if(deltaTime <= 0){
+    clearInterval(timerId)
+  }else{
+    const timeLeft = convertMs(deltaTime)
+     updateDataTime(timeLeft)
+  }
+}
 
-function updateDataTime(deltaTime){
-  const {days, hours, minutes, seconds} = convertMs(deltaTime)
+function updateDataTime({days, hours, minutes, seconds }){
+  // const {days, hours, minutes, seconds} = convertMs(deltaTime)
 
-  daysFor.textContent = days;
-  hoursFor.textContent = hours;
-  minutesFor.textContent = minutes;
-  secondsFor.textContent = seconds;
+  daysFor.textContent = `${days}`;
+  hoursFor.textContent = `${hours}`;
+  minutesFor.textContent = `${minutes}`;
+  secondsFor.textContent = `${seconds}`;
 }
 flatpickr(inputRef, options);
 
